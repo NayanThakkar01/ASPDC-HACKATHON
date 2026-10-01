@@ -307,6 +307,18 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* ===================== URGENCY PULSE (events < 24h away) ===================== */
+    @keyframes urgencyPulse {
+      0%, 100% { transform: scale(1); box-shadow: inherit; }
+      50% { transform: scale(1.06); filter: brightness(1.25); }
+    }
+    .orb-node.urgency-mode {
+      animation: urgencyPulse 1.4s ease-in-out infinite !important;
+    }
+    .urgency-countdown-live {
+      animation: urgencyPulse 0.8s ease-in-out infinite;
+    }
+
     /* ===================== VIEW TOGGLE BUTTON ===================== */
     #viewToggleBtn {
       position: relative;
@@ -840,65 +852,85 @@
     const SEED_EVENTS = [
       {
         id: "evt-agentic-ai",
-        title: "Agentic AI Bootcamp - LangGraph & RAG",
+        title: "Agentic AI Bootcamp — LangGraph & RAG",
         category: "AI/ML",
+        club: "AI & Web Cell",
+        clubInitials: "AWC",
         date: "Oct 14, 2026 • 18:00 IST",
+        targetDate: new Date("2026-10-14T18:00:00+05:30"),
         venue: "Turing Lab 402 & Discord Stream",
+        registerLink: "https://forms.gle/agenticai-bootcamp",
         description: "Master multi-agent orchestration, recursive workflows, and production RAG pipelines with LangGraph. Build autonomous developer agents with stateful memory, tool augmentation, and real-time observability.",
         tags: ["AI/ML", "Agentic", "LangGraph", "RAG"],
-        color: "#00f0ff", // Neon Cyan
+        color: "#00f0ff",
         glowClass: "shadow-[0_0_35px_rgba(0,240,255,0.45)]",
         borderClass: "border-cyan-400/40",
         bgGradient: "radial-gradient(circle at 35% 35%, rgba(0, 240, 255, 0.28) 0%, rgba(6, 13, 29, 0.85) 100%)"
       },
       {
         id: "evt-eyantra-robotics",
-        title: "e-Yantra Robotics Prep - Echo Balancer Theme",
+        title: "e-Yantra Echo Balancer Prep Sprint",
         category: "Robotics",
+        club: "Hardware & Robotics Cell",
+        clubInitials: "HRC",
         date: "Oct 18, 2026 • 15:30 IST",
+        targetDate: new Date("2026-10-18T15:30:00+05:30"),
         venue: "Mechatronics Bay 3",
-        description: "Deep dive into self-balancing inverted pendulum dynamics, PID tuning, and IMU sensor fusion on STM32 microcontrollers for IIT Bombay's flagship robotics competition.",
+        registerLink: "https://eyantra.iitb.ac.in/register",
+        description: "Deep dive into self-balancing inverted pendulum dynamics, PID auto-tuning, and IMU sensor fusion on STM32 microcontrollers for IIT Bombay's flagship e-Yantra Robotics Competition.",
         tags: ["Robotics", "Embedded", "STM32", "PID"],
-        color: "#ffaa00", // Neon Amber
+        color: "#ffaa00",
         glowClass: "shadow-[0_0_35px_rgba(255,170,0,0.45)]",
         borderClass: "border-amber-400/40",
         bgGradient: "radial-gradient(circle at 35% 35%, rgba(255, 170, 0, 0.28) 0%, rgba(20, 12, 4, 0.85) 100%)"
       },
       {
         id: "evt-wordpress-connect",
-        title: "WordPress Campus Connect Demo",
+        title: "WordPress Campus Connect — Headless CMS",
         category: "WebDev",
+        club: "Open Source Dev Guild",
+        clubInitials: "OSD",
         date: "Oct 22, 2026 • 14:00 IST",
+        targetDate: new Date("2026-10-22T14:00:00+05:30"),
         venue: "CS Seminar Hall B",
+        registerLink: "https://wpconnect.campus/register",
         description: "Explore modern headless WordPress architectures, Gutenberg block development with React, GraphQL integrations, and lightning-fast edge CDN deployments for campus web portals.",
         tags: ["WebDev", "OpenSource", "Headless", "CMS"],
-        color: "#bd00ff", // Neon Magenta/Purple
+        color: "#bd00ff",
         glowClass: "shadow-[0_0_35px_rgba(189,0,255,0.45)]",
         borderClass: "border-purple-400/40",
         bgGradient: "radial-gradient(circle at 35% 35%, rgba(189, 0, 255, 0.28) 0%, rgba(17, 6, 28, 0.85) 100%)"
       },
       {
         id: "evt-ecovault-pitch",
-        title: "Eco-Vault 2.0 Pitch Submission",
+        title: "Eco-Vault 2.0 — Green-Tech Pitch Submission",
         category: "Pitch",
+        club: "Innovation Hub",
+        clubInitials: "INN",
         date: "Oct 25, 2026 • 23:59 IST",
+        targetDate: new Date("2026-10-25T23:59:00+05:30"),
         venue: "Innovation Incubation Hub (Virtual Portal)",
+        registerLink: "https://ecovault.campus/submit",
         description: "Final deadline for green-tech incubation proposals. Submit tokenized carbon offset protocols, campus solar smart-grid analytics, and circular economy financial models for seed grant consideration.",
         tags: ["Sustainability", "Fintech", "Pitch", "GreenTech"],
-        color: "#00ff88", // Neon Emerald
+        color: "#00ff88",
         glowClass: "shadow-[0_0_35px_rgba(0,255,136,0.45)]",
         borderClass: "border-emerald-400/40",
         bgGradient: "radial-gradient(circle at 35% 35%, rgba(0, 255, 136, 0.28) 0%, rgba(4, 22, 14, 0.85) 100%)"
       },
       {
         id: "evt-discrete-math",
-        title: "Discrete Math & C Programming Study Session",
+        title: "Discrete Math & C — Mentor Study Session",
         category: "Academics",
+        club: "Competitive Programming Club",
+        clubInitials: "CPC",
         date: "Oct 28, 2026 • 19:00 IST",
+        targetDate: new Date("2026-10-28T19:00:00+05:30"),
         venue: "Central Library Discussion Zone A",
+        registerLink: "https://cpclub.campus/session",
         description: "Conquer graph theory, recurrences, combinatorics, and memory management mastery in C. Live whiteboard problem-solving with senior mentors before midterms.",
         tags: ["Academics", "Algorithms", "Low-Level", "C"],
-        color: "#ff0055", // Neon Rose
+        color: "#ff0055",
         glowClass: "shadow-[0_0_35px_rgba(255,0,85,0.45)]",
         borderClass: "border-rose-400/40",
         bgGradient: "radial-gradient(circle at 35% 35%, rgba(255, 0, 85, 0.28) 0%, rgba(26, 4, 12, 0.85) 100%)"
@@ -1246,12 +1278,22 @@
         this.lastSoundTime = 0;
         this.lastTrailTime = 0;
 
+        // Urgency: is this event < 24 hours away?
+        this.isUrgent = this.data.targetDate
+          ? (this.data.targetDate - new Date()) < 86400000 && (this.data.targetDate - new Date()) > 0
+          : false;
+
         // DOM Element creation
         this.el = document.createElement('div');
-        this.el.className = `orb-node pointer-events-auto transition-transform ${this.data.glowClass}`;
+        this.el.className = `orb-node pointer-events-auto transition-transform ${this.data.glowClass}${this.isUrgent ? ' urgency-mode' : ''}`;
         this.el.id = `orb-${this.id}`;
         this.el.style.width = `${this.size}px`;
         this.el.style.height = `${this.size}px`;
+
+        // Apply themeColor glow and border from data
+        if (this.data.color) {
+          this.el.style.boxShadow = `0 0 35px ${this.data.color}72`;
+        }
 
         this.renderDomContent();
         this.attachEvents();
@@ -1272,15 +1314,29 @@
 
       renderDomContent() {
         const isRsvpd = rsvpEventIds.has(this.id);
+        const clubInitials = this.data.clubInitials || this.data.category.slice(0,3).toUpperCase();
+        const isUrgentNow = this.data.targetDate
+          ? (this.data.targetDate - new Date()) < 86400000 && (this.data.targetDate - new Date()) > 0
+          : false;
         this.el.innerHTML = `
           <div class="orb-inner shadow-inner" style="background: ${this.data.bgGradient};">
-            <!-- Top Status Pill -->
-            <div class="flex items-center gap-1 mb-1">
-              <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${this.data.color}; box-shadow: 0 0 6px ${this.data.color}"></span>
-              <span class="text-[9px] font-mono tracking-wider font-bold uppercase text-slate-300">
-                ${this.data.category}
+            <!-- Top row: Category pill + Club initials badge -->
+            <div class="flex items-center justify-between gap-1 mb-1 w-full">
+              <div class="flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color: ${this.data.color}; box-shadow: 0 0 6px ${this.data.color}"></span>
+                <span class="text-[9px] font-mono tracking-wider font-bold uppercase text-slate-300">
+                  ${this.data.category}
+                </span>
+              </div>
+              <!-- Club Initials Badge -->
+              <span class="text-[8px] font-black font-mono px-1 py-0.5 rounded flex-shrink-0"
+                style="color: ${this.data.color}; background: ${this.data.color}20; border: 1px solid ${this.data.color}55; letter-spacing:0.04em;">
+                ${clubInitials}
               </span>
             </div>
+
+            <!-- Urgency indicator strip -->
+            ${isUrgentNow ? `<div class="w-full text-[8px] font-mono font-bold text-center rounded mb-1 urgency-countdown-live" style="background:${this.data.color}25;color:${this.data.color};">⚡ LAUNCHING SOON</div>` : ''}
 
             <!-- Title -->
             <h3 class="text-[11px] sm:text-xs font-bold text-white line-clamp-2 leading-tight px-1 mb-1">
@@ -1467,6 +1523,20 @@
         }
 
         // 2. FREE-FLOATING ZERO-G STATE
+
+        // URGENCY PHYSICS: < 24h events float 1.5× faster + pulse animation
+        const msLeft = this.data.targetDate ? (this.data.targetDate - new Date()) : Infinity;
+        const isNowUrgent = msLeft > 0 && msLeft < 86400000;
+        if (isNowUrgent) {
+          this.el.classList.add('urgency-mode');
+          // 1.5× base velocity boost: inject a tiny random nudge every frame
+          const urgentAngle = Math.atan2(this.vy, this.vx) || Math.random() * Math.PI * 2;
+          const boostAmt = 0.018;
+          this.vx += Math.cos(urgentAngle) * boostAmt;
+          this.vy += Math.sin(urgentAngle) * boostAmt;
+        } else {
+          this.el.classList.remove('urgency-mode');
+        }
 
         // Apply Physical Phone Tilt Gravity Vector
         if (tiltGravity.active && tiltGravity.enabled) {
@@ -1688,6 +1758,62 @@
       openFocusModal();
     }
 
+    // --- HOLOGRAPHIC COUNTDOWN SYSTEM ---
+    let countdownIntervalId = null;
+
+    function stopCountdown() {
+      if (countdownIntervalId) {
+        clearInterval(countdownIntervalId);
+        countdownIntervalId = null;
+      }
+    }
+
+    function startCountdown(targetDate) {
+      stopCountdown();
+      const el = document.getElementById('modalCountdownDisplay');
+      if (!el || !targetDate) return;
+
+      function tick() {
+        const now = new Date();
+        const diffMs = targetDate - now;
+
+        if (diffMs <= 0) {
+          el.innerHTML = `
+            <span class="font-mono font-black tracking-widest text-emerald-400 text-sm animate-pulse"
+              style="text-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 24px rgba(0,255,136,0.5);">
+              ▶ EVENT LIVE
+            </span>`;
+          stopCountdown();
+          return;
+        }
+
+        const totalSec = Math.floor(diffMs / 1000);
+        const dd = String(Math.floor(totalSec / 86400)).padStart(2, '0');
+        const hh = String(Math.floor((totalSec % 86400) / 3600)).padStart(2, '0');
+        const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+        const ss = String(totalSec % 60).padStart(2, '0');
+
+        const urgent = diffMs < 86400000;
+        const color = urgent ? '#ff0055' : '#00f0ff';
+        const pulseClass = urgent ? 'urgency-countdown-live' : '';
+
+        el.innerHTML = `
+          <div class="flex items-center gap-1.5 ${pulseClass}">
+            ${[['DD', dd], ['HH', hh], ['MM', mm], ['SS', ss]].map(([label, val]) => `
+              <div class="flex flex-col items-center">
+                <span class="font-mono font-black text-lg leading-none" style="color:${color}; text-shadow: 0 0 10px ${color}88; letter-spacing: 0.06em;">${val}</span>
+                <span class="text-[8px] font-mono tracking-widest uppercase" style="color:${color}66;">${label}</span>
+              </div>
+              ${label !== 'SS' ? `<span class="text-lg font-black leading-none" style="color:${color}88; margin-bottom: 4px;">:</span>` : ''}
+            `).join('')}
+          </div>
+        `;
+      }
+
+      tick();
+      countdownIntervalId = setInterval(tick, 1000);
+    }
+
     function populateFocusModal(node) {
       const data = node.data;
       const isRsvpd = rsvpEventIds.has(node.id);
@@ -1696,7 +1822,7 @@
       document.getElementById('modalDate').textContent = data.date;
       document.getElementById('modalVenue').textContent = data.venue;
       document.getElementById('modalDescription').textContent = data.description;
-      
+
       const badge = document.getElementById('modalBadge');
       badge.textContent = data.category;
       badge.style.color = data.color;
@@ -1710,6 +1836,43 @@
       const orbitStatus = document.getElementById('modalOrbitStatus');
       orbitStatus.classList.toggle('hidden', !isRsvpd);
 
+      // ── Club badge + countdown block ──
+      let countdownBlock = document.getElementById('modalInfoBlock');
+      if (!countdownBlock) {
+        countdownBlock = document.createElement('div');
+        countdownBlock.id = 'modalInfoBlock';
+        // Insert after the metadata section, before description
+        const descContainer = document.getElementById('modalDescription').parentElement;
+        descContainer.parentElement.insertBefore(countdownBlock, descContainer);
+      }
+      countdownBlock.innerHTML = `
+        <!-- Club organizer -->
+        ${data.club ? `
+          <div class="flex items-center gap-2 mb-3 text-xs">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="${data.color}" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span class="text-slate-400 font-mono">Organised by</span>
+            <span class="font-bold font-mono" style="color: ${data.color};">${data.club}</span>
+          </div>
+        ` : ''}
+
+        <!-- Holographic Countdown -->
+        ${data.targetDate ? `
+          <div class="mb-4 p-3 rounded-xl border flex flex-col items-center gap-1.5"
+            style="background: ${data.color}0a; border-color: ${data.color}30; box-shadow: inset 0 0 20px ${data.color}0a;">
+            <div class="flex items-center gap-1.5 text-[9px] font-mono tracking-widest uppercase mb-1" style="color: ${data.color}99;">
+              <span class="w-1 h-1 rounded-full animate-ping" style="background: ${data.color}"></span>
+              LIVE COUNTDOWN — LOCKING TRAJECTORY
+            </div>
+            <div id="modalCountdownDisplay" class="min-h-[36px] flex items-center justify-center"></div>
+          </div>
+        ` : ''}
+      `;
+
+      // Start live countdown ticker
+      if (data.targetDate) startCountdown(data.targetDate);
+
       // Render Tags
       const tagsContainer = document.getElementById('modalTags');
       tagsContainer.innerHTML = '';
@@ -1722,10 +1885,14 @@
         });
       }
 
-      updateModalRsvpButton(isRsvpd);
+      updateModalRsvpButton(isRsvpd, data);
     }
 
-    function updateModalRsvpButton(isRsvpd) {
+    function updateModalRsvpButton(isRsvpd, data) {
+      // Look up data from current focusedNode if not explicitly passed
+      const evData = data || (focusedNode && focusedNode.data) || {};
+      const registerLink = evData.registerLink || null;
+
       const btn = document.getElementById('modalRsvpBtn');
       if (isRsvpd) {
         btn.className = "w-full sm:flex-1 py-3 px-5 rounded-2xl font-bold text-sm tracking-wide transition-all bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 shadow-[0_0_20px_rgba(255,0,85,0.3)] flex items-center justify-center gap-2";
@@ -1746,6 +1913,35 @@
           <span>Add to Personal Orbit (RSVP)</span>
         `;
       }
+
+      // ── Hyper-Drive Registration Button ──
+      let warpBtn = document.getElementById('modalWarpRegisterBtn');
+      if (!warpBtn) {
+        // Create the anchor element and inject into the action buttons row
+        const actionsRow = btn.parentElement;
+        warpBtn = document.createElement('a');
+        warpBtn.id = 'modalWarpRegisterBtn';
+        warpBtn.target = '_blank';
+        warpBtn.rel = 'noopener noreferrer';
+        actionsRow.appendChild(warpBtn);
+      }
+      if (registerLink) {
+        warpBtn.href = registerLink;
+        warpBtn.className = 'flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm tracking-wide transition-all border border-white/20 text-white hover:scale-105 hover:brightness-110';
+        warpBtn.style.cssText = `background: linear-gradient(135deg, rgba(189,0,255,0.3), rgba(0,240,255,0.2)); box-shadow: 0 0 22px rgba(189,0,255,0.4), inset 0 1px 0 rgba(255,255,255,0.1); border-color: rgba(189,0,255,0.5);`;
+        warpBtn.innerHTML = `
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          <span>Initiate Warp [Register]</span>
+          <svg class="w-3 h-3 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        `;
+        warpBtn.style.display = '';
+      } else {
+        warpBtn.style.display = 'none';
+      }
     }
 
     function openFocusModal() {
@@ -1760,6 +1956,15 @@
       const card = document.getElementById('focusModalCard');
       overlay.classList.add('opacity-0', 'pointer-events-none');
       card.classList.add('scale-90', 'opacity-0');
+
+      // Stop the countdown interval to prevent memory leaks
+      stopCountdown();
+      // Remove the dynamically-injected info block so it doesn't duplicate on next open
+      const infoBlock = document.getElementById('modalInfoBlock');
+      if (infoBlock) infoBlock.remove();
+      // Remove warp register button so it rebuilds fresh
+      const warpBtn = document.getElementById('modalWarpRegisterBtn');
+      if (warpBtn) warpBtn.remove();
 
       if (focusedNode) {
         if (!focusedNode.isOrbiting) {
