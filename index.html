@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Campus Orbit: Zero-G Event Nexus</title>
+  <meta name="description" content="Campus Orbit is an anti-gravity event discovery nexus featuring real-time DOM physics, touch/cursor repulsion, mobile tilt gravity, particle trails, gravity well focus, and orbital RSVP persistence with black hole singularity discarding.">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            space: {
+              950: '#030712',
+              900: '#060d1d',
+              800: '#0d182e',
+            },
+            neon: {
+              cyan: '#00f0ff',
+              magenta: '#bd00ff',
+              amber: '#ffaa00',
+              emerald: '#00ff88',
+              rose: '#ff0055',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          },
+          animation: {
+            'spin-slow': 'spin 30s linear infinite',
+            'spin-fast': 'spin 3s linear infinite',
+            'spin-reverse': 'spin-rev 24s linear infinite',
+            'pulse-glow': 'pulse-glow 2.5s ease-in-out infinite',
+            'radar': 'radar 4s linear infinite',
+          },
+          keyframes: {
+            'spin-rev': {
+              '0%': { transform: 'rotate(360deg)' },
+              '100%': { transform: 'rotate(0deg)' }
+            },
+            'pulse-glow': {
+              '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+              '50%': { opacity: '0.8', transform: 'scale(1.04)' }
+            },
+            'radar': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Custom deep space styles & glassmorphic shaders */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 50%, #0c1228 0%, #060914 55%, #02040a 100%);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    /* Starfield Background */
+    .starfield {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(1px 1px at 25px 35px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 120px 80px, #00f0ff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 220px 190px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 350px 320px, #bd00ff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 480px 140px, #00ff88, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 650px 290px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 800px 420px, #ffaa00, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 980px 150px, #00f0ff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 1120px 380px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 1350px 220px, #bd00ff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 500px 500px;
+      opacity: 0.65;
+    }
+
+    /* Cosmic Nebula Glows */
+    .nebula-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      opacity: 0.18;
+      transition: all 1s ease;
+    }
+
+    /* Event Node Glass Sphere & Neon Glow */
+    .orb-node {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 9999px;
+      cursor: grab;
+      will-change: transform;
+      transform-style: preserve-3d;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .orb-node:active {
+      cursor: grabbing;
+    }
+
+    .orb-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 9999px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      position: relative;
+      overflow: hidden;
+      padding: 0.75rem;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+    }
+
+    .orb-inner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: 9999px 9999px 0 0;
+      pointer-events: none;
+    }
+
+    .orb-node:hover .orb-inner {
+      transform: scale(1.06);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Orbiting Node Visual Cue */
+    .is-orbiting .orb-inner {
+      border-width: 2px;
+      box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.25);
+    }
+
+    .is-orbiting::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 9999px;
+      border: 1.5px dashed rgba(0, 240, 255, 0.6);
+      animation: spin-slow 12s linear infinite;
+      pointer-events: none;
+    }
+
+    /* Dragging Node Cue */
+    .is-dragging {
+      z-index: 60 !important;
+      cursor: grabbing !important;
+      filter: brightness(1.25) drop-shadow(0 0 25px rgba(0, 240, 255, 0.8)) !important;
+    }
+
+    /* Mouse repulsion field indicator */
+    #cursorRepulsionField {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 1px dashed rgba(0, 240, 255, 0.2);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.05) 0%, rgba(0, 240, 255, 0) 70%);
+      z-index: 5;
+    }
+
+    /* Particle Trail System Container */
+    #particleTrailContainer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9;
+      overflow: hidden;
+    }
+
+    /* Black Hole Suction Active State */
+    .suction-active #blackHoleDropZone {
+      transform: scale(1.22);
+      filter: drop-shadow(0 0 40px rgba(189, 0, 255, 1));
+    }
+    .suction-active #singularityCore {
+      border-color: #ff0055 !important;
+      box-shadow: 0 0 50px #ff0055, inset 0 0 20px #ff0055 !important;
+      animation: spin-fast 1s linear infinite !important;
+    }
+
+    /* Scrollbar for modal content */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.3);
+      border-radius: 2px;
+    }
+
+    /* Ambient CRT scanline overlay */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      opacity: 0.25;
+      z-index: 2;
+    }
+
+    /* ===================== OFF-CANVAS SIDEBAR ===================== */
+    #sidebarMenu {
+      will-change: transform;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.3) rgba(255, 255, 255, 0.05);
+    }
+    #sidebarMenu::-webkit-scrollbar { width: 3px; }
+    #sidebarMenu::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+    #sidebarMenu::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.3); border-radius: 2px; }
+
+    .sidebar-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: rgba(203, 213, 225, 1);
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .sidebar-nav-link:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-nav-link.active {
+      background: rgba(0, 240, 255, 0.12);
+      color: #00f0ff;
+      border-color: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.15);
+    }
+
+    /* ===================== STANDARD GRID VIEW ===================== */
+    #standardViewContainer {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.3) rgba(255, 255, 255, 0.05);
+    }
+    #standardViewContainer::-webkit-scrollbar { width: 4px; }
+    #standardViewContainer::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+    #standardViewContainer::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.3); border-radius: 2px; }
+
+    .std-event-card {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .std-event-card:hover {
+      transform: translateY(-4px);
+    }
+
+    /* ===================== TOAST NOTIFICATION ===================== */
+    #toastNotification {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #toastNotification.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===================== VIEW TOGGLE BUTTON ===================== */
+    #viewToggleBtn {
+      position: relative;
+      overflow: hidden;
+    }
+    #viewToggleBtn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(189,0,255,0.08));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #viewToggleBtn:hover::before { opacity: 1; }
+  </style>
+</head>
+<body class="text-slate-100 font-sans select-none overflow-hidden relative">
+
+  <!-- ===================== SIDEBAR OVERLAY BACKDROP ===================== -->
+  <div id="sidebarOverlay" onclick="closeSidebar()" class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- ===================== OFF-CANVAS SIDEBAR MENU ===================== -->
+  <aside id="sidebarMenu" class="fixed top-0 right-0 h-full w-72 z-[70] translate-x-full transition-transform duration-300 ease-in-out flex flex-col overflow-y-auto shadow-[-4px_0_40px_rgba(0,0,0,0.6)]" style="background: linear-gradient(160deg, rgba(6,13,29,0.97) 0%, rgba(2,4,10,0.99) 100%); border-left: 1px solid rgba(255,255,255,0.07);">
+
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between p-5 border-b border-white/8 flex-shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center shadow-[0_0_12px_rgba(0,240,255,0.3)]">
+          <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)" />
+          </svg>
+        </div>
+        <div>
+          <div class="text-sm font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white to-cyan-400">CAMPUS ORBIT</div>
+          <div class="text-[9px] font-mono text-cyan-400/70 tracking-widest uppercase">Navigation Nexus</div>
+        </div>
+      </div>
+      <button onclick="closeSidebar()" class="p-1.5 rounded-full bg-white/8 hover:bg-white/15 text-slate-400 hover:text-white transition-all border border-white/10 group">
+        <svg class="w-5 h-5 transition-transform group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Main Nav Links -->
+    <nav class="flex-1 p-4 space-y-1">
+      <p class="text-[9px] font-mono tracking-widest uppercase text-slate-500 px-3 pb-1 pt-1">Navigation</p>
+      <button onclick="navHome()" id="sidebarLinkHome" class="sidebar-nav-link w-full active">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)" />
+        </svg>
+        <span>Home / Zero-G Universe</span>
+      </button>
+      <button onclick="navMyOrbit()" id="sidebarLinkOrbit" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" /><circle cx="12" cy="12" r="3" fill="currentColor" />
+        </svg>
+        <span>My Orbit</span>
+        <span id="sidebarOrbitBadge" class="ml-auto text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">0</span>
+      </button>
+      <button onclick="navTeams()" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75" />
+        </svg>
+        <span>Teams</span>
+        <span class="ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-400/25">Soon</span>
+      </button>
+      <button onclick="navLeaderboard()" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+        <span>Leaderboard</span>
+        <span class="ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-400/25">Soon</span>
+      </button>
+
+      <p class="text-[9px] font-mono tracking-widest uppercase text-slate-500 px-3 pb-1 pt-4">View Mode</p>
+      <button onclick="toggleView(); closeSidebar();" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="sidebarViewIcon">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span id="sidebarViewLabel">Switch to Grid View</span>
+      </button>
+
+      <p class="text-[9px] font-mono tracking-widest uppercase text-slate-500 px-3 pb-1 pt-4">Sector Filters</p>
+      <div class="space-y-1">
+        <button onclick="filterCategory('all'); closeSidebar();" class="cat-filter-btn sidebar-nav-link w-full text-xs" data-category="all">All Sectors</button>
+        <button onclick="filterCategory('AI/ML'); closeSidebar();" class="cat-filter-btn sidebar-nav-link w-full text-xs" data-category="AI/ML">AI &amp; Agents</button>
+        <button onclick="filterCategory('Robotics'); closeSidebar();" class="cat-filter-btn sidebar-nav-link w-full text-xs" data-category="Robotics">Robotics</button>
+        <button onclick="filterCategory('WebDev'); closeSidebar();" class="cat-filter-btn sidebar-nav-link w-full text-xs" data-category="WebDev">Web Dev</button>
+        <button onclick="filterCategory('Pitch'); closeSidebar();" class="cat-filter-btn sidebar-nav-link w-full text-xs" data-category="Pitch">Pitch</button>
+      </div>
+
+      <p class="text-[9px] font-mono tracking-widest uppercase text-slate-500 px-3 pb-1 pt-4">Controls</p>
+      <button onclick="toggleTiltGravity()" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" />
+        </svg>
+        <span>Tilt Gravity</span>
+        <span id="sidebarGyroText" class="ml-auto text-[10px] font-mono text-slate-400">Auto</span>
+      </button>
+      <button onclick="triggerGravitationalBlast()" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+        <span>Shockwave Blast</span>
+      </button>
+      <button onclick="toggleAudio()" class="sidebar-nav-link w-full">
+        <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+        </svg>
+        <span>Sci-Fi Audio FX</span>
+      </button>
+      <button onclick="openCreateEventModal(); closeSidebar();" class="sidebar-nav-link w-full border border-cyan-400/25 bg-cyan-500/8 hover:bg-cyan-500/15">
+        <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        <span class="text-cyan-300">Deploy New Event Node</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="flex-shrink-0 p-4 border-t border-white/8 text-[10px] font-mono text-slate-500 text-center">
+      Campus Orbit: Zero-G Event Nexus &bull; v2.0
+    </div>
+  </aside>
+
+  <!-- ===================== TOAST NOTIFICATION ===================== -->
+  <div id="toastNotification" class="px-5 py-3 rounded-2xl bg-slate-800/95 backdrop-blur-xl border border-white/15 text-sm font-semibold text-white shadow-[0_0_30px_rgba(0,0,0,0.5)] flex items-center gap-2.5"></div>
+
+  <!-- Background Ambience & Starfield -->
+  <div class="starfield"></div>
+  <div class="scanlines"></div>
+  <div class="nebula-glow bg-cyan-600/20 top-1/4 -left-32 animate-pulse-glow"></div>
+  <div class="nebula-glow bg-purple-600/20 bottom-10 -right-32 animate-pulse-glow" style="animation-delay: -1.5s;"></div>
+  <div class="nebula-glow bg-emerald-600/15 top-1/2 left-1/3 animate-pulse-glow" style="animation-delay: -3s;"></div>
+
+  <!-- Cursor Repulsion Field Visualization (150px Radius = 300px Diameter) -->
+  <div id="cursorRepulsionField"></div>
+
+  <!-- Particle Trail System Layer -->
+  <div id="particleTrailContainer"></div>
+
+  <!-- Fixed Background Orbit Ring -->
+  <div id="orbitSystemContainer" class="fixed inset-0 pointer-events-none flex items-center justify-center z-0">
+    <!-- Outer Decorative Radar Ring -->
+    <div id="orbitRadarRing" class="absolute rounded-full border border-cyan-500/10 transition-all duration-700"></div>
+    
+    <!-- Primary Glowing Orbit Ring -->
+    <div id="orbitRing" class="absolute rounded-full border-2 border-dashed border-cyan-400/40 shadow-[0_0_40px_rgba(0,240,255,0.18)] transition-all duration-700 flex items-center justify-center">
+      <!-- Radar Sweeper line inside the ring -->
+      <div class="absolute inset-0 rounded-full overflow-hidden opacity-25 pointer-events-none">
+        <div class="w-full h-full animate-radar origin-center bg-gradient-to-tr from-cyan-500/25 to-transparent"></div>
+      </div>
+      <!-- Center Gravity Nexus Core -->
+      <div class="w-12 h-12 rounded-full border border-cyan-400/30 bg-cyan-950/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)] animate-pulse">
+        <div class="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]"></div>
+      </div>
+      <!-- Orbit ring label -->
+      <span class="absolute -top-3.5 px-3 py-0.5 rounded-full text-[10px] tracking-widest font-mono uppercase bg-space-950/90 border border-cyan-500/40 text-cyan-300 shadow-[0_0_12px_rgba(0,240,255,0.3)]">
+        Personal Orbit Trajectory
+      </span>
+    </div>
+  </div>
+
+  <!-- Physics World Container (DOM nodes rendered here) -->
+  <main id="physicsContainer" class="fixed inset-0 overflow-hidden pointer-events-none z-10"></main>
+
+  <!-- ===================== STANDARD EVENT GRID VIEW ===================== -->
+  <div id="standardViewContainer" class="fixed inset-0 z-10 overflow-y-auto hidden" style="padding-top: 5rem; padding-bottom: 5rem;">
+    <!-- Hero Banner -->
+    <div class="text-center py-8 px-4">
+      <div class="inline-flex items-center gap-2.5 mb-3 px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-[11px] font-mono text-cyan-300 tracking-widest uppercase">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+        Standard Grid Mode — Physics Engine Paused
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1 tracking-tight">Campus <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">Event Nexus</span></h2>
+      <p class="text-sm text-slate-400 max-w-md mx-auto">Browse, RSVP, and launch any event back into Zero-G mode.</p>
+    </div>
+    <!-- Responsive Event Card Grid -->
+    <div id="standardEventGrid" class="max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-8">
+      <!-- Rendered dynamically by renderStandardGrid() -->
+    </div>
+  </div>
+
+  <!-- Visually Distinct "Black Hole" Singularity Drop Zone -->
+  <div id="blackHoleContainer" class="fixed bottom-14 right-4 sm:bottom-14 sm:right-8 z-20 flex flex-col items-center pointer-events-auto select-none group transition-transform duration-300">
+    <!-- Status / Hint Banner -->
+    <div id="blackHoleLabel" class="mb-2 px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-widest uppercase bg-space-950/90 border border-purple-500/40 text-purple-300 shadow-[0_0_15px_rgba(189,0,255,0.4)] flex items-center gap-1.5 transition-all group-hover:border-purple-400 group-hover:scale-105">
+      <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span>
+      <span id="blackHoleLabelText">BLACK HOLE // DROP TO DISCARD</span>
+    </div>
+
+    <!-- Black Hole Gravity Vortex Node -->
+    <div id="blackHoleDropZone" class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center transition-all duration-300">
+      <!-- Outer Swirling Accretion Disk Ring 1 -->
+      <div class="absolute inset-0 rounded-full border border-purple-500/40 animate-spin-slow"></div>
+      <!-- Outer Swirling Accretion Disk Ring 2 -->
+      <div class="absolute inset-2 rounded-full border-2 border-dashed border-purple-400/60 animate-spin-reverse"></div>
+      <!-- Gravitational Lensing Distortion Disk -->
+      <div class="absolute inset-4 rounded-full bg-gradient-to-tr from-purple-900/60 via-black to-cyan-900/40 animate-pulse-glow backdrop-blur-sm"></div>
+      
+      <!-- Singularity Event Horizon Core -->
+      <div id="singularityCore" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black border-2 border-purple-500 shadow-[0_0_35px_rgba(189,0,255,0.8),inset_0_0_15px_rgba(0,0,0,1)] flex items-center justify-center transition-all duration-300">
+        <div class="w-4 h-4 rounded-full bg-purple-950 border border-purple-400/60 shadow-[0_0_12px_#bd00ff] animate-ping opacity-75"></div>
+        <div class="absolute w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#ffffff]"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Cyberpunk HUD Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-30 px-4 py-3 sm:px-8 sm:py-4 flex items-center justify-between pointer-events-auto">
+    <!-- Left Logo & System Status -->
+    <div class="flex items-center gap-3">
+      <div class="relative w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+        <div class="absolute inset-0 rounded-xl border border-cyan-400/40 animate-ping opacity-25"></div>
+        <svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3" />
+          <ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)" />
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-base sm:text-lg font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-200 to-cyan-400">
+            CAMPUS ORBIT
+          </h1>
+          <span class="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono font-bold tracking-widest uppercase rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+            Zero-G Nexus
+          </span>
+        </div>
+        <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>REPULSION ENGINE: ACTIVE</span>
+          <span class="text-slate-600">•</span>
+          <span id="fpsCounter" class="text-cyan-400/80">60 FPS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Nav Links (hidden on mobile) -->
+    <nav class="hidden lg:flex items-center gap-0.5">
+      <button onclick="navHome()" id="navLinkHome" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/10 flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)" />
+        </svg>Home
+      </button>
+      <button onclick="navMyOrbit()" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/10 flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" /><circle cx="12" cy="12" r="3" fill="currentColor" />
+        </svg>My Orbit
+      </button>
+      <button onclick="navTeams()" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/10 flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75" />
+        </svg>Teams
+      </button>
+      <button onclick="navLeaderboard()" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/10 flex items-center gap-2">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>Leaderboard
+      </button>
+    </nav>
+
+    <!-- Right Controls HUD -->
+    <div class="flex items-center gap-1.5 sm:gap-2">
+
+      <!-- === VIEW TOGGLE SWITCH (Always Visible, Hero Control) === -->
+      <button id="viewToggleBtn" onclick="toggleView()" title="Switch between Zero-G Bubble and Grid view"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-xl backdrop-blur-xl border text-xs font-bold tracking-wide transition-all bg-white/8 border-white/15 text-slate-200 hover:border-cyan-400/50 hover:text-cyan-300 shadow-sm">
+        <span id="viewToggleIcon">
+          <!-- Icon swapped by JS -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </span>
+        <span id="viewToggleText" class="hidden sm:inline">Grid View</span>
+      </button>
+
+      <!-- Desktop-only: Tilt Gravity -->
+      <button id="gyroToggleBtn" onclick="toggleTiltGravity()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/8 hover:bg-white/12 backdrop-blur-xl border border-white/15 text-xs font-mono text-slate-300 hover:text-white transition-all" title="Toggle Phone Tilt Gravity">
+        <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" />
+        </svg>
+        <span id="gyroStatusText" class="text-slate-400 font-bold">Auto</span>
+      </button>
+
+      <!-- Personal Orbit Badge (Always Visible) -->
+      <button id="orbitQuickToggleBtn" onclick="toggleOrbitListModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/8 hover:bg-white/12 backdrop-blur-xl border border-cyan-400/30 text-xs font-mono text-cyan-300 transition-all shadow-[0_0_12px_rgba(0,240,255,0.12)]" title="View Personal Orbit RSVPs">
+        <svg class="w-4 h-4 text-cyan-400 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" /><circle cx="12" cy="12" r="3" fill="currentColor" />
+        </svg>
+        <span class="hidden lg:inline font-sans font-medium text-slate-200">Orbit RSVPs:</span>
+        <span id="orbitCountBadge" class="px-1.5 rounded-full bg-cyan-500/25 text-cyan-200 font-bold">0</span>
+      </button>
+
+      <!-- Desktop-only: Shockwave -->
+      <button onclick="triggerGravitationalBlast()" class="hidden sm:flex p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/8 hover:bg-white/12 backdrop-blur-xl border border-white/15 text-xs font-mono text-slate-300 hover:text-white transition-all items-center gap-1.5" title="Kinetic Shockwave">
+        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+        <span class="hidden lg:inline">Shockwave</span>
+      </button>
+
+      <!-- Desktop-only: Audio Toggle -->
+      <button id="audioToggleBtn" onclick="toggleAudio()" class="hidden sm:flex p-2 rounded-xl bg-white/8 hover:bg-white/12 backdrop-blur-xl border border-white/15 text-slate-300 hover:text-white transition-all" title="Toggle Sci-Fi Audio">
+        <svg id="audioIconOn" class="w-4 h-4 text-cyan-400 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+        </svg>
+        <svg id="audioIconOff" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
+        </svg>
+      </button>
+
+      <!-- Desktop-only: Add Event -->
+      <button onclick="openCreateEventModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/18 hover:bg-cyan-500/28 backdrop-blur-xl border border-cyan-400/40 text-xs font-semibold text-cyan-300 hover:text-cyan-100 transition-all shadow-[0_0_12px_rgba(0,240,255,0.15)]">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        <span class="hidden lg:inline">Add Event</span>
+      </button>
+
+      <!-- Mobile Hamburger Menu Button -->
+      <button onclick="openSidebar()" class="flex lg:hidden p-2 rounded-xl bg-white/8 hover:bg-white/15 backdrop-blur-xl border border-white/15 text-slate-300 hover:text-white transition-all" title="Open Menu" aria-label="Open sidebar navigation">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Bottom Telemetry HUD & Interaction Guide -->
+  <footer class="fixed bottom-0 left-0 right-0 z-30 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2 pointer-events-none text-xs font-mono text-slate-400">
+    <div class="flex items-center gap-3 pointer-events-auto bg-space-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
+      <span class="text-cyan-400 font-bold">PHYSICS TELEMETRY:</span>
+      <span id="telemetryStatus">Zero-G Active • Tilt Gravity Armed • 150px Cursor Sphere</span>
+    </div>
+    
+    <div class="flex items-center gap-2 pointer-events-auto bg-space-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
+      <span class="text-slate-500 hidden md:inline">CONTROLS:</span>
+      <span class="text-slate-300">Hover to Repel</span>
+      <span class="text-slate-600">•</span>
+      <span class="text-cyan-300">Drag to Black Hole</span>
+      <span class="text-slate-600">•</span>
+      <span class="text-purple-300">Tilt Phone for Gravity</span>
+    </div>
+  </footer>
+
+  <!-- Gravity Well Focus Card (Active Event Details Modal) -->
+  <div id="focusModalOverlay" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div id="focusModalCard" class="w-full max-w-lg rounded-3xl bg-slate-900/90 backdrop-blur-2xl border border-white/20 p-6 sm:p-8 shadow-[0_0_60px_rgba(0,240,255,0.25)] transform scale-90 opacity-0 transition-all duration-300 relative overflow-hidden pointer-events-auto">
+      
+      <!-- Top Decorative Glow bar -->
+      <div id="modalCategoryAccent" class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-400 to-purple-500 shadow-[0_0_15px_#00f0ff]"></div>
+
+      <!-- Close / Release Button -->
+      <button onclick="releaseFocusWell()" class="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-slate-400 hover:text-white transition-all group" title="Release back to Zero-G">
+        <svg class="w-5 h-5 transition-transform group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <!-- Event Status & Tag Pill -->
+      <div class="flex items-center gap-2 mb-3">
+        <span id="modalBadge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase border">
+          AI & Agentic
+        </span>
+        <span id="modalOrbitStatus" class="px-2.5 py-0.5 rounded-full text-xs font-mono text-cyan-300 bg-cyan-950/80 border border-cyan-500/40 hidden">
+          ● IN ORBIT
+        </span>
+      </div>
+
+      <!-- Event Title -->
+      <h2 id="modalTitle" class="text-xl sm:text-2xl font-bold text-white mb-3 leading-snug">
+        Agentic AI Bootcamp - LangGraph & RAG
+      </h2>
+
+      <!-- Metadata Items (Date, Venue) -->
+      <div class="space-y-2 mb-4 text-xs sm:text-sm text-slate-300">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-4 h-4 text-cyan-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span id="modalDate" class="font-mono text-cyan-200">Oct 14, 2026 • 18:00 IST</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <svg class="w-4 h-4 text-purple-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span id="modalVenue" class="text-slate-300">Turing Lab 402 & Discord Stream</span>
+        </div>
+      </div>
+
+      <!-- Description Body -->
+      <div class="mb-5 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+        <p id="modalDescription" class="text-sm text-slate-300 leading-relaxed font-normal">
+          Master multi-agent orchestration, recursive workflows, and production RAG pipelines with LangGraph. Build autonomous developer agents with stateful memory and tool augmentation.
+        </p>
+      </div>
+
+      <!-- Tags Cloud -->
+      <div id="modalTags" class="flex flex-wrap gap-1.5 mb-6">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 pt-2 border-t border-white/10">
+        <button id="modalRsvpBtn" onclick="toggleRsvpCurrentEvent()" class="w-full sm:flex-1 py-3 px-5 rounded-2xl font-bold text-sm tracking-wide transition-all shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2">
+          <!-- Text and SVG set dynamically -->
+        </button>
+        <button onclick="releaseFocusWell()" class="w-full sm:w-auto py-3 px-5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-slate-200 font-semibold text-sm transition-all flex items-center justify-center gap-1.5">
+          Release to Zero-G
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RSVP Orbit Management Drawer / Modal -->
+  <div id="orbitListModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-cyan-400/40 p-6 shadow-[0_0_50px_rgba(0,240,255,0.25)] transform scale-95 transition-all duration-300 relative">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-300">
+            <svg class="w-4 h-4 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" />
+              <circle cx="12" cy="12" r="3" fill="currentColor" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white">Your Personal Orbit</h3>
+            <p class="text-[11px] text-cyan-300/80 font-mono">Synchronized with LocalStorage</p>
+          </div>
+        </div>
+        <button onclick="toggleOrbitListModal()" class="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white transition-all">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Orbit List Container -->
+      <div id="orbitItemsList" class="space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar pr-1 mb-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="flex items-center justify-between pt-3 border-t border-white/10 text-xs">
+        <span class="text-slate-400 font-mono">Total in Orbit: <strong id="orbitTotalCount" class="text-cyan-300">0</strong></span>
+        <button onclick="clearAllOrbit()" class="text-rose-400 hover:text-rose-300 font-medium transition-colors">
+          Clear Orbit Ring
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create New Event Modal (Bonus for Hackathon Judges) -->
+  <div id="createEventModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-white/20 p-6 shadow-[0_0_50px_rgba(189,0,255,0.25)] relative">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+        <h3 class="font-bold text-base text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping"></span>
+          Deploy New Zero-G Event Node
+        </h3>
+        <button onclick="closeCreateEventModal()" class="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white transition-all">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="newEventForm" onsubmit="handleCreateEventSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Event Title</label>
+          <input type="text" id="inputTitle" required placeholder="e.g., Quantum Computing Workshop" class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-slate-300 font-medium mb-1">Date & Time</label>
+            <input type="text" id="inputDate" required placeholder="e.g., Nov 02 • 17:00 IST" class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
+          </div>
+          <div>
+            <label class="block text-slate-300 font-medium mb-1">Sector / Category</label>
+            <select id="inputCategory" class="w-full px-3 py-2 rounded-xl bg-slate-800 border border-white/15 text-white focus:outline-none focus:border-cyan-400 transition-colors">
+              <option value="AI/ML">AI & Machine Learning</option>
+              <option value="Robotics">Robotics & Hardware</option>
+              <option value="WebDev">Web & Cloud Systems</option>
+              <option value="Pitch">Startup & Pitch</option>
+              <option value="Academics">Academics & Study</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Campus Venue / Link</label>
+          <input type="text" id="inputVenue" required placeholder="e.g., Ada Lovelace Hall or Zoom" class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Description</label>
+          <textarea id="inputDescription" rows="3" required placeholder="Brief briefing of the zero-g mission..." class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors"></textarea>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">Tags (Comma-separated)</label>
+          <input type="text" id="inputTags" placeholder="Quantum, Algorithms, Qiskit" class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold hover:opacity-95 shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all">
+            Launch Orb Into Zero-G Space
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Implementation -->
+  <script>
+    /**
+     * CAMPUS ORBIT: ZERO-G EVENT NEXUS
+     * Pure DOM 2D Physics Engine, Inverse-Square Repulsion, Mobile Tilt Gravity,
+     * Procedural Particle Trails, Black Hole Singularity Discard & Orbit State Persistence
+     */
+
+    // --- SEED EVENTS (Required Exact 5 Events + IDs) ---
+    const SEED_EVENTS = [
+      {
+        id: "evt-agentic-ai",
+        title: "Agentic AI Bootcamp - LangGraph & RAG",
+        category: "AI/ML",
+        date: "Oct 14, 2026 • 18:00 IST",
+        venue: "Turing Lab 402 & Discord Stream",
+        description: "Master multi-agent orchestration, recursive workflows, and production RAG pipelines with LangGraph. Build autonomous developer agents with stateful memory, tool augmentation, and real-time observability.",
+        tags: ["AI/ML", "Agentic", "LangGraph", "RAG"],
+        color: "#00f0ff", // Neon Cyan
+        glowClass: "shadow-[0_0_35px_rgba(0,240,255,0.45)]",
+        borderClass: "border-cyan-400/40",
+        bgGradient: "radial-gradient(circle at 35% 35%, rgba(0, 240, 255, 0.28) 0%, rgba(6, 13, 29, 0.85) 100%)"
+      },
+      {
+        id: "evt-eyantra-robotics",
+        title: "e-Yantra Robotics Prep - Echo Balancer Theme",
+        category: "Robotics",
+        date: "Oct 18, 2026 • 15:30 IST",
+        venue: "Mechatronics Bay 3",
+        description: "Deep dive into self-balancing inverted pendulum dynamics, PID tuning, and IMU sensor fusion on STM32 microcontrollers for IIT Bombay's flagship robotics competition.",
+        tags: ["Robotics", "Embedded", "STM32", "PID"],
+        color: "#ffaa00", // Neon Amber
+        glowClass: "shadow-[0_0_35px_rgba(255,170,0,0.45)]",
+        borderClass: "border-amber-400/40",
+        bgGradient: "radial-gradient(circle at 35% 35%, rgba(255, 170, 0, 0.28) 0%, rgba(20, 12, 4, 0.85) 100%)"
+      },
+      {
+        id: "evt-wordpress-connect",
+        title: "WordPress Campus Connect Demo",
+        category: "WebDev",
+        date: "Oct 22, 2026 • 14:00 IST",
+        venue: "CS Seminar Hall B",
+        description: "Explore modern headless WordPress architectures, Gutenberg block development with React, GraphQL integrations, and lightning-fast edge CDN deployments for campus web portals.",
+        tags: ["WebDev", "OpenSource", "Headless", "CMS"],
+        color: "#bd00ff", // Neon Magenta/Purple
+        glowClass: "shadow-[0_0_35px_rgba(189,0,255,0.45)]",
+        borderClass: "border-purple-400/40",
+        bgGradient: "radial-gradient(circle at 35% 35%, rgba(189, 0, 255, 0.28) 0%, rgba(17, 6, 28, 0.85) 100%)"
+      },
+      {
+        id: "evt-ecovault-pitch",
+        title: "Eco-Vault 2.0 Pitch Submission",
+        category: "Pitch",
+        date: "Oct 25, 2026 • 23:59 IST",
+        venue: "Innovation Incubation Hub (Virtual Portal)",
+        description: "Final deadline for green-tech incubation proposals. Submit tokenized carbon offset protocols, campus solar smart-grid analytics, and circular economy financial models for seed grant consideration.",
+        tags: ["Sustainability", "Fintech", "Pitch", "GreenTech"],
+        color: "#00ff88", // Neon Emerald
+        glowClass: "shadow-[0_0_35px_rgba(0,255,136,0.45)]",
+        borderClass: "border-emerald-400/40",
+        bgGradient: "radial-gradient(circle at 35% 35%, rgba(0, 255, 136, 0.28) 0%, rgba(4, 22, 14, 0.85) 100%)"
+      },
+      {
+        id: "evt-discrete-math",
+        title: "Discrete Math & C Programming Study Session",
+        category: "Academics",
+        date: "Oct 28, 2026 • 19:00 IST",
+        venue: "Central Library Discussion Zone A",
+        description: "Conquer graph theory, recurrences, combinatorics, and memory management mastery in C. Live whiteboard problem-solving with senior mentors before midterms.",
+        tags: ["Academics", "Algorithms", "Low-Level", "C"],
+        color: "#ff0055", // Neon Rose
+        glowClass: "shadow-[0_0_35px_rgba(255,0,85,0.45)]",
+        borderClass: "border-rose-400/40",
+        bgGradient: "radial-gradient(circle at 35% 35%, rgba(255, 0, 85, 0.28) 0%, rgba(26, 4, 12, 0.85) 100%)"
+      }
+    ];
+
+    // --- AUDIO SYNTHESIZER (Web Audio API - Zero External Dependencies) ---
+    class SciFiSoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = false;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      }
+      playRepulsionSound(pitch = 240) {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(pitch, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(pitch * 1.5, this.ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.12);
+        } catch (e) {}
+      }
+      playFocusSound() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.35);
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.35);
+        } catch (e) {}
+      }
+      playOrbitSound() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [330, 440, 660].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.06, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.3);
+          });
+        } catch (e) {}
+      }
+      playSingularitySound() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          const now = this.ctx.currentTime;
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(25, now + 0.65);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.65);
+        } catch (e) {}
+      }
+    }
+    const soundEngine = new SciFiSoundEngine();
+
+    function toggleAudio() {
+      soundEngine.init();
+      soundEngine.enabled = !soundEngine.enabled;
+      document.getElementById('audioIconOn').classList.toggle('hidden', !soundEngine.enabled);
+      document.getElementById('audioIconOff').classList.toggle('hidden', soundEngine.enabled);
+      if (soundEngine.enabled) soundEngine.playOrbitSound();
+    }
+
+    // --- STATE MANAGEMENT & LOCAL STORAGE ---
+    const STORAGE_KEY = 'campus_orbit_rsvps';
+    const CUSTOM_EVENTS_KEY = 'campus_orbit_custom_events';
+
+    let rsvpEventIds = new Set();
+    function loadSavedRsvps() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            rsvpEventIds = new Set(parsed);
+          }
+        }
+      } catch (e) {
+        console.warn('LocalStorage access error:', e);
+      }
+    }
+
+    function saveRsvps() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...rsvpEventIds]));
+      } catch (e) {
+        console.warn('LocalStorage save error:', e);
+      }
+      updateOrbitBadge();
+    }
+
+    function loadCustomEvents() {
+      try {
+        const saved = localStorage.getItem(CUSTOM_EVENTS_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {}
+      return [];
+    }
+
+    function saveCustomEvent(ev) {
+      try {
+        const existing = loadCustomEvents();
+        existing.push(ev);
+        localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(existing));
+      } catch (e) {}
+    }
+
+    // --- DEVICE ORIENTATION & MOBILE TILT GRAVITY ---
+    const tiltGravity = {
+      x: 0,
+      y: 0,
+      active: false,
+      enabled: true
+    };
+
+    function handleDeviceOrientation(e) {
+      if (!tiltGravity.enabled) return;
+      if (e.gamma === null && e.beta === null) return;
+
+      tiltGravity.active = true;
+      // Gamma: Left-to-Right tilt [-90 to 90]
+      // Beta: Front-to-Back tilt [-180 to 180] (Offset by 30 degrees for typical phone viewing angle)
+      const clampedGamma = Math.max(-45, Math.min(45, e.gamma || 0));
+      const clampedBeta = Math.max(-45, Math.min(45, (e.beta || 0) - 30));
+
+      const tiltStrength = 0.55;
+      tiltGravity.x = (clampedGamma / 45) * tiltStrength;
+      tiltGravity.y = (clampedBeta / 45) * tiltStrength;
+
+      // Update telemetry
+      const tel = document.getElementById('telemetryStatus');
+      if (tel) {
+        tel.textContent = `Zero-G Active • Gyro Vector: (${tiltGravity.x.toFixed(2)}, ${tiltGravity.y.toFixed(2)}) • 150px Cursor Sphere`;
+      }
+      const st = document.getElementById('gyroStatusText');
+      if (st) {
+        st.textContent = "Active";
+        st.classList.remove('text-slate-400');
+        st.classList.add('text-emerald-400');
+      }
+    }
+
+    function toggleTiltGravity() {
+      // Handle iOS 13+ permission request
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(res => {
+            if (res === 'granted') {
+              window.addEventListener('deviceorientation', handleDeviceOrientation);
+              tiltGravity.enabled = true;
+              document.getElementById('gyroStatusText').textContent = "Active";
+              document.getElementById('gyroStatusText').className = "text-emerald-400 font-bold";
+            }
+          })
+          .catch(console.error);
+      } else {
+        tiltGravity.enabled = !tiltGravity.enabled;
+        if (!tiltGravity.enabled) {
+          tiltGravity.x = 0;
+          tiltGravity.y = 0;
+          tiltGravity.active = false;
+          document.getElementById('gyroStatusText').textContent = "Off";
+          document.getElementById('gyroStatusText').className = "text-slate-400 font-bold";
+        } else {
+          document.getElementById('gyroStatusText').textContent = "Active";
+          document.getElementById('gyroStatusText').className = "text-emerald-400 font-bold";
+        }
+      }
+    }
+
+    window.addEventListener('deviceorientation', handleDeviceOrientation);
+
+    // --- PROCEDURAL PARTICLE TRAIL SYSTEM ---
+    const particleContainer = document.getElementById('particleTrailContainer');
+
+    function spawnParticleTrail(x, y, color) {
+      if (!particleContainer) return;
+      const p = document.createElement('div');
+      p.className = 'absolute rounded-full pointer-events-none';
+      
+      const size = 6 + Math.random() * 5;
+      p.style.width = `${size}px`;
+      p.style.height = `${size}px`;
+      
+      // Center on position with subtle random dispersal
+      const jitterX = (Math.random() - 0.5) * 14;
+      const jitterY = (Math.random() - 0.5) * 14;
+      p.style.left = `${x - size / 2 + jitterX}px`;
+      p.style.top = `${y - size / 2 + jitterY}px`;
+      
+      p.style.backgroundColor = color;
+      p.style.boxShadow = `0 0 12px ${color}, 0 0 4px #ffffff`;
+      p.style.opacity = '0.9';
+      p.style.transform = 'scale(1)';
+      p.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease-out';
+      p.style.zIndex = '8';
+
+      particleContainer.appendChild(p);
+
+      // Trigger fade out and shrink on next animation frame
+      requestAnimationFrame(() => {
+        p.style.transform = 'scale(0.15)';
+        p.style.opacity = '0';
+      });
+
+      // Strictly remove from DOM after 400ms
+      setTimeout(() => {
+        if (p.parentNode) p.remove();
+      }, 400);
+    }
+
+    // --- BLACK HOLE DROP ZONE INTERACTION ---
+    const blackHoleContainer = document.getElementById('blackHoleContainer');
+    const blackHoleDropZone = document.getElementById('blackHoleDropZone');
+    let blackHoleCenter = { x: 0, y: 0, radius: 64 };
+
+    function updateBlackHoleCenter() {
+      if (blackHoleDropZone) {
+        const rect = blackHoleDropZone.getBoundingClientRect();
+        blackHoleCenter.x = rect.left + rect.width / 2;
+        blackHoleCenter.y = rect.top + rect.height / 2;
+        blackHoleCenter.radius = rect.width / 2 + 30; // Suction trigger radius
+      }
+    }
+
+    function checkBlackHoleHover(x, y) {
+      const dx = x - blackHoleCenter.x;
+      const dy = y - blackHoleCenter.y;
+      const dist = Math.hypot(dx, dy);
+      const isNear = dist < blackHoleCenter.radius + 35;
+      
+      if (blackHoleContainer) {
+        blackHoleContainer.classList.toggle('suction-active', isNear);
+      }
+      const label = document.getElementById('blackHoleLabelText');
+      if (label) {
+        label.textContent = isNear ? "RELEASE TO SINK INTO SINGULARITY!" : "BLACK HOLE // DROP TO DISCARD";
+        label.parentElement.classList.toggle('border-rose-400', isNear);
+        label.parentElement.classList.toggle('text-rose-300', isNear);
+      }
+      return isNear;
+    }
+
+    function resetBlackHoleHover() {
+      if (blackHoleContainer) {
+        blackHoleContainer.classList.remove('suction-active');
+      }
+      const label = document.getElementById('blackHoleLabelText');
+      if (label) {
+        label.textContent = "BLACK HOLE // DROP TO DISCARD";
+        label.parentElement.classList.remove('border-rose-400', 'text-rose-300');
+      }
+    }
+
+    function isInsideBlackHole(x, y) {
+      const dx = x - blackHoleCenter.x;
+      const dy = y - blackHoleCenter.y;
+      return Math.hypot(dx, dy) < blackHoleCenter.radius + 20;
+    }
+
+    // --- PHYSICS ENGINE DATA STRUCTURES ---
+    let eventsList = [];
+    let physicsNodes = [];
+    let focusedNode = null;
+    let isFocusMode = false;
+    let activeCategoryFilter = 'all';
+
+    // Pointer Tracker
+    const cursor = {
+      x: -1000,
+      y: -1000,
+      active: false,
+      radius: 150 // 150px repulsion radius requirement
+    };
+
+    // Viewport dimensions
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+    let orbitCenter = { x: viewWidth / 2, y: viewHeight / 2 };
+    let orbitRadius = Math.min(viewWidth, viewHeight) * 0.32;
+
+    // Node Class for DOM 2D Anti-Gravity Physics
+    class EventOrbNode {
+      constructor(eventData, index, totalCount) {
+        this.data = eventData;
+        this.id = eventData.id;
+        
+        // Dynamic Node Diameter (scales on small screens)
+        this.size = viewWidth < 640 ? 124 : 156;
+        this.radius = this.size / 2;
+
+        // Position coordinates
+        this.x = 0;
+        this.y = 0;
+
+        // Velocity vectors
+        const speed = 0.6 + Math.random() * 0.7;
+        const angle = Math.random() * Math.PI * 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+
+        // Orbit Properties
+        this.isOrbiting = rsvpEventIds.has(this.id);
+        this.orbitAngle = (index / Math.max(1, totalCount)) * Math.PI * 2;
+        this.orbitSpeed = 0.007 + (index % 3) * 0.002;
+
+        // Interaction flags
+        this.isBeingDragged = false;
+        this.isSwallowed = false;
+        this.lastSoundTime = 0;
+        this.lastTrailTime = 0;
+
+        // DOM Element creation
+        this.el = document.createElement('div');
+        this.el.className = `orb-node pointer-events-auto transition-transform ${this.data.glowClass}`;
+        this.el.id = `orb-${this.id}`;
+        this.el.style.width = `${this.size}px`;
+        this.el.style.height = `${this.size}px`;
+
+        this.renderDomContent();
+        this.attachEvents();
+        
+        // Initial placement
+        if (this.isOrbiting) {
+          this.x = orbitCenter.x + orbitRadius * Math.cos(this.orbitAngle) - this.radius;
+          this.y = orbitCenter.y + orbitRadius * Math.sin(this.orbitAngle) - this.radius;
+          this.el.classList.add('is-orbiting');
+        } else {
+          const padding = 100;
+          this.x = padding + Math.random() * (viewWidth - this.size - padding * 2);
+          this.y = 90 + Math.random() * (viewHeight - this.size - 180);
+        }
+
+        this.applyTransform();
+      }
+
+      renderDomContent() {
+        const isRsvpd = rsvpEventIds.has(this.id);
+        this.el.innerHTML = `
+          <div class="orb-inner shadow-inner" style="background: ${this.data.bgGradient};">
+            <!-- Top Status Pill -->
+            <div class="flex items-center gap-1 mb-1">
+              <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${this.data.color}; box-shadow: 0 0 6px ${this.data.color}"></span>
+              <span class="text-[9px] font-mono tracking-wider font-bold uppercase text-slate-300">
+                ${this.data.category}
+              </span>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-[11px] sm:text-xs font-bold text-white line-clamp-2 leading-tight px-1 mb-1">
+              ${this.data.title}
+            </h3>
+
+            <!-- Date -->
+            <div class="text-[9px] font-mono text-cyan-200/90 truncate max-w-full">
+              ${this.data.date.split('•')[0]}
+            </div>
+
+            <!-- In Orbit Badge Indicator -->
+            ${isRsvpd ? `
+              <div class="absolute bottom-1.5 px-2 py-0.2 rounded-full bg-cyan-500/20 border border-cyan-400/50 text-[8px] font-mono text-cyan-300">
+                IN ORBIT
+              </div>
+            ` : `
+              <div class="text-[8px] text-slate-400/80 font-mono mt-0.5 opacity-80">
+                Tap to Focus • Drag
+              </div>
+            `}
+          </div>
+        `;
+      }
+
+      attachEvents() {
+        let isPointerDown = false;
+        let startPointerX = 0;
+        let startPointerY = 0;
+        let nodeStartX = 0;
+        let nodeStartY = 0;
+        let hasDragged = false;
+
+        const onStart = (clientX, clientY) => {
+          if (this.isSwallowed || this === focusedNode) return;
+          isPointerDown = true;
+          hasDragged = false;
+          startPointerX = clientX;
+          startPointerY = clientY;
+          nodeStartX = this.x;
+          nodeStartY = this.y;
+          this.isBeingDragged = true;
+          this.el.classList.add('is-dragging');
+        };
+
+        const onMove = (clientX, clientY) => {
+          if (!isPointerDown) return;
+          const dx = clientX - startPointerX;
+          const dy = clientY - startPointerY;
+
+          if (!hasDragged && Math.hypot(dx, dy) > 8) {
+            hasDragged = true;
+          }
+
+          if (hasDragged) {
+            this.x = nodeStartX + dx;
+            this.y = nodeStartY + dy;
+            this.applyTransform();
+            
+            // Spawn procedural trail while dragging
+            spawnParticleTrail(this.x + this.radius, this.y + this.radius, this.data.color);
+
+            // Check if hovered over Black Hole
+            checkBlackHoleHover(this.x + this.radius, this.y + this.radius);
+          }
+        };
+
+        const onEnd = () => {
+          if (!isPointerDown) return;
+          isPointerDown = false;
+          this.isBeingDragged = false;
+          this.el.classList.remove('is-dragging');
+
+          if (!hasDragged) {
+            // Normal Click -> Open Gravity Well Focus
+            handleNodeClick(this);
+          } else {
+            // Check if dropped into Black Hole
+            const nodeCenterX = this.x + this.radius;
+            const nodeCenterY = this.y + this.radius;
+
+            if (isInsideBlackHole(nodeCenterX, nodeCenterY)) {
+              triggerBlackHoleSwallow(this);
+            } else {
+              resetBlackHoleHover();
+              if (this.isOrbiting) {
+                // Settle smoothly back onto the circular orbit ring
+                this.orbitAngle = Math.atan2(nodeCenterY - orbitCenter.y, nodeCenterX - orbitCenter.x);
+              } else {
+                // Toss with gentle velocity
+                const angle = Math.atan2(this.y - nodeStartY, this.x - nodeStartX);
+                const throwSpeed = Math.min(7, Math.hypot(this.x - nodeStartX, this.y - nodeStartY) * 0.06);
+                this.vx = Math.cos(angle) * throwSpeed;
+                this.vy = Math.sin(angle) * throwSpeed;
+              }
+            }
+          }
+        };
+
+        // Desktop Mouse Handlers
+        this.el.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onStart(e.clientX, e.clientY);
+
+          const moveHandler = (ev) => onMove(ev.clientX, ev.clientY);
+          const upHandler = () => {
+            onEnd();
+            window.removeEventListener('mousemove', moveHandler);
+            window.removeEventListener('mouseup', upHandler);
+          };
+          window.addEventListener('mousemove', moveHandler);
+          window.addEventListener('mouseup', upHandler);
+        });
+
+        // Mobile Touch Handlers
+        this.el.addEventListener('touchstart', (e) => {
+          e.stopPropagation();
+          if (e.touches.length > 0) {
+            onStart(e.touches[0].clientX, e.touches[0].clientY);
+          }
+
+          const touchMoveHandler = (ev) => {
+            if (ev.touches.length > 0) {
+              onMove(ev.touches[0].clientX, ev.touches[0].clientY);
+            }
+          };
+
+          const touchEndHandler = () => {
+            onEnd();
+            window.removeEventListener('touchmove', touchMoveHandler);
+            window.removeEventListener('touchend', touchEndHandler);
+            window.removeEventListener('touchcancel', touchEndHandler);
+          };
+
+          window.addEventListener('touchmove', touchMoveHandler, { passive: true });
+          window.addEventListener('touchend', touchEndHandler, { passive: true });
+          window.addEventListener('touchcancel', touchEndHandler, { passive: true });
+        }, { passive: true });
+      }
+
+      applyTransform() {
+        this.el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+      }
+
+      setOrbiting(inOrbit) {
+        this.isOrbiting = inOrbit;
+        if (inOrbit) {
+          this.el.classList.add('is-orbiting');
+        } else {
+          this.el.classList.remove('is-orbiting');
+          const angle = Math.random() * Math.PI * 2;
+          this.vx = Math.cos(angle) * 1.5;
+          this.vy = Math.sin(angle) * 1.5;
+        }
+        this.renderDomContent();
+      }
+
+      update(deltaTime) {
+        if (this.isSwallowed) return;
+
+        // If held in Gravity Well center
+        if (this === focusedNode) {
+          const targetX = viewWidth / 2 - this.radius;
+          const targetY = viewHeight / 2 - this.radius;
+          this.x += (targetX - this.x) * 0.12;
+          this.y += (targetY - this.y) * 0.12;
+          this.applyTransform();
+          return;
+        }
+
+        // If actively being dragged by user, physics position is handled by drag listener
+        if (this.isBeingDragged) {
+          return;
+        }
+
+        // 1. ORBITING STATE: mathematically constrained along circular orbit ring
+        if (this.isOrbiting) {
+          this.orbitAngle += this.orbitSpeed;
+          this.x = orbitCenter.x + orbitRadius * Math.cos(this.orbitAngle) - this.radius;
+          this.y = orbitCenter.y + orbitRadius * Math.sin(this.orbitAngle) - this.radius;
+          this.applyTransform();
+          return;
+        }
+
+        // 2. FREE-FLOATING ZERO-G STATE
+
+        // Apply Physical Phone Tilt Gravity Vector
+        if (tiltGravity.active && tiltGravity.enabled) {
+          this.vx += tiltGravity.x;
+          this.vy += tiltGravity.y;
+        }
+
+        // Anti-Gravity Cursor Repulsion (Inverse-Square Law)
+        let isBeingRepelledRapidly = false;
+        if (cursor.active) {
+          const centerX = this.x + this.radius;
+          const centerY = this.y + this.radius;
+          const dx = centerX - cursor.x;
+          const dy = centerY - cursor.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < cursor.radius && dist > 1) {
+            // Inverse-Square Law Repulsion: Closer = Much Stronger Force
+            const normalizedDist = dist / cursor.radius;
+            const force = Math.min(22, 1.8 / (normalizedDist * normalizedDist + 0.18));
+
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            this.vx += nx * force * 0.65;
+            this.vy += ny * force * 0.65;
+
+            isBeingRepelledRapidly = true;
+
+            // Trigger gentle audio chime on strong repulsive kick
+            const now = performance.now();
+            if (force > 6 && now - this.lastSoundTime > 200) {
+              soundEngine.playRepulsionSound(280 + Math.random() * 200);
+              this.lastSoundTime = now;
+            }
+          }
+        }
+
+        // Speed calculation
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+        const maxSpeed = 10;
+        const minCruiseSpeed = 0.55;
+
+        // PROCEDURAL PARTICLE TRAIL: Spawn tiny glowing DOM divs when repelled rapidly or moving fast
+        const now = performance.now();
+        if ((isBeingRepelledRapidly || speed > 3.4) && now - this.lastTrailTime > 28) {
+          spawnParticleTrail(this.x + this.radius, this.y + this.radius, this.data.color);
+          this.lastTrailTime = now;
+        }
+
+        // Apply friction
+        this.vx *= 0.985;
+        this.vy *= 0.985;
+
+        // Cap maximum velocity
+        if (speed > maxSpeed) {
+          this.vx = (this.vx / speed) * maxSpeed;
+          this.vy = (this.vy / speed) * maxSpeed;
+        } else if (speed < minCruiseSpeed && !isFocusMode && !tiltGravity.active) {
+          const angle = Math.atan2(this.vy, this.vx) || (Math.random() * Math.PI * 2);
+          this.vx = Math.cos(angle) * minCruiseSpeed;
+          this.vy = Math.sin(angle) * minCruiseSpeed;
+        }
+
+        // Integrate Position
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Smooth Boundary Collisions (Bounce off browser window borders)
+        const topBound = 72;
+        const bottomBound = viewHeight - 65;
+        const leftBound = 16;
+        const rightBound = viewWidth - 16;
+        const elasticity = 0.95;
+
+        if (this.x < leftBound) {
+          this.x = leftBound;
+          this.vx = -this.vx * elasticity;
+        } else if (this.x + this.size > rightBound) {
+          this.x = rightBound - this.size;
+          this.vx = -this.vx * elasticity;
+        }
+
+        if (this.y < topBound) {
+          this.y = topBound;
+          this.vy = -this.vy * elasticity;
+        } else if (this.y + this.size > bottomBound) {
+          this.y = bottomBound - this.size;
+          this.vy = -this.vy * elasticity;
+        }
+
+        this.applyTransform();
+      }
+    }
+
+    // --- BLACK HOLE SINGULARITY SWALLOW SEQUENCE ---
+    function triggerBlackHoleSwallow(node) {
+      soundEngine.playSingularitySound();
+      resetBlackHoleHover();
+
+      node.isSwallowed = true;
+      node.isBeingDragged = false;
+
+      // 1. Vortex Shrinking & Spinning Animation into Singularity
+      node.el.style.transition = 'transform 0.65s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.65s ease-in';
+      node.el.style.transform = `translate3d(${blackHoleCenter.x - node.radius}px, ${blackHoleCenter.y - node.radius}px, 0) scale(0.01) rotate(720deg)`;
+      node.el.style.opacity = '0';
+
+      // 2. Remove from LocalStorage & Personal Orbit
+      rsvpEventIds.delete(node.id);
+      saveRsvps();
+      updateOrbitBadge();
+      renderOrbitItemsList();
+
+      // Singularity Flash Effect
+      if (blackHoleDropZone) {
+        blackHoleDropZone.style.filter = 'drop-shadow(0 0 60px #ff0055)';
+        setTimeout(() => {
+          blackHoleDropZone.style.filter = '';
+        }, 500);
+      }
+
+      // 3. Eject particle burst & respawn node into free Zero-G space
+      for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+          spawnParticleTrail(blackHoleCenter.x, blackHoleCenter.y, '#bd00ff');
+        }, i * 30);
+      }
+
+      setTimeout(() => {
+        node.setOrbiting(false);
+        node.el.style.transition = '';
+        node.el.style.opacity = '1';
+        
+        // Eject out from Black Hole
+        node.x = Math.max(20, blackHoleCenter.x - node.radius - 120);
+        node.y = Math.max(90, blackHoleCenter.y - node.radius - 120);
+        node.vx = -3.5 - Math.random() * 2.5;
+        node.vy = -3.5 - Math.random() * 2.5;
+        node.isSwallowed = false;
+        node.applyTransform();
+      }, 700);
+    }
+
+    // --- REPOSITION ORBIT RING & BLACK HOLE ON RESIZE ---
+    function updateDimensions() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      orbitCenter = { x: viewWidth / 2, y: viewHeight / 2 };
+      orbitRadius = Math.min(viewWidth, viewHeight) * 0.32;
+
+      // Update Orbit Ring in DOM
+      const ring = document.getElementById('orbitRing');
+      const radarRing = document.getElementById('orbitRadarRing');
+      const diameter = orbitRadius * 2;
+      
+      if (ring) {
+        ring.style.width = `${diameter}px`;
+        ring.style.height = `${diameter}px`;
+      }
+      if (radarRing) {
+        radarRing.style.width = `${diameter * 1.3}px`;
+        radarRing.style.height = `${diameter * 1.3}px`;
+      }
+
+      // Update Black Hole Center coordinates
+      updateBlackHoleCenter();
+
+      // Update node sizes if view switched between mobile/desktop
+      physicsNodes.forEach(node => {
+        const newSize = viewWidth < 640 ? 124 : 156;
+        if (node.size !== newSize) {
+          node.size = newSize;
+          node.radius = newSize / 2;
+          node.el.style.width = `${newSize}px`;
+          node.el.style.height = `${newSize}px`;
+        }
+      });
+    }
+
+    // --- INITIALIZE PHYSICS WORLD ---
+    function initPhysicsWorld() {
+      const container = document.getElementById('physicsContainer');
+      container.innerHTML = '';
+      physicsNodes = [];
+
+      const customEvents = loadCustomEvents();
+      eventsList = [...SEED_EVENTS, ...customEvents];
+
+      eventsList.forEach((ev, idx) => {
+        const node = new EventOrbNode(ev, idx, eventsList.length);
+        physicsNodes.push(node);
+        container.appendChild(node.el);
+      });
+
+      updateOrbitBadge();
+      updateBlackHoleCenter();
+    }
+
+    // --- GRAVITY WELL FOCUS MODE ---
+    function handleNodeClick(node) {
+      soundEngine.playFocusSound();
+      focusedNode = node;
+      isFocusMode = true;
+
+      // Anti-Gravity Blast to ALL OTHER NODES (push rapidly to edges)
+      physicsNodes.forEach(other => {
+        if (other !== node && !other.isOrbiting) {
+          const dx = (other.x + other.radius) - (viewWidth / 2);
+          const dy = (other.y + other.radius) - (viewHeight / 2);
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const blastStrength = 18 + Math.random() * 8;
+          other.vx = (dx / dist) * blastStrength;
+          other.vy = (dy / dist) * blastStrength;
+        }
+      });
+
+      populateFocusModal(node);
+      openFocusModal();
+    }
+
+    function populateFocusModal(node) {
+      const data = node.data;
+      const isRsvpd = rsvpEventIds.has(node.id);
+
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalDate').textContent = data.date;
+      document.getElementById('modalVenue').textContent = data.venue;
+      document.getElementById('modalDescription').textContent = data.description;
+      
+      const badge = document.getElementById('modalBadge');
+      badge.textContent = data.category;
+      badge.style.color = data.color;
+      badge.style.borderColor = `${data.color}66`;
+      badge.style.backgroundColor = `${data.color}1a`;
+
+      const accent = document.getElementById('modalCategoryAccent');
+      accent.style.background = `linear-gradient(90deg, ${data.color}, #00f0ff)`;
+      accent.style.boxShadow = `0 0 20px ${data.color}`;
+
+      const orbitStatus = document.getElementById('modalOrbitStatus');
+      orbitStatus.classList.toggle('hidden', !isRsvpd);
+
+      // Render Tags
+      const tagsContainer = document.getElementById('modalTags');
+      tagsContainer.innerHTML = '';
+      if (Array.isArray(data.tags)) {
+        data.tags.forEach(tag => {
+          const pill = document.createElement('span');
+          pill.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-white/5 border border-white/10 text-slate-300';
+          pill.textContent = `#${tag}`;
+          tagsContainer.appendChild(pill);
+        });
+      }
+
+      updateModalRsvpButton(isRsvpd);
+    }
+
+    function updateModalRsvpButton(isRsvpd) {
+      const btn = document.getElementById('modalRsvpBtn');
+      if (isRsvpd) {
+        btn.className = "w-full sm:flex-1 py-3 px-5 rounded-2xl font-bold text-sm tracking-wide transition-all bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 shadow-[0_0_20px_rgba(255,0,85,0.3)] flex items-center justify-center gap-2";
+        btn.innerHTML = `
+          <svg class="w-4 h-4 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Remove from Personal Orbit</span>
+        `;
+      } else {
+        btn.className = "w-full sm:flex-1 py-3 px-5 rounded-2xl font-bold text-sm tracking-wide transition-all bg-cyan-400 text-space-950 hover:bg-cyan-300 shadow-[0_0_30px_rgba(0,240,255,0.6)] flex items-center justify-center gap-2";
+        btn.innerHTML = `
+          <svg class="w-4 h-4 text-space-950 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" />
+            <circle cx="12" cy="12" r="3" fill="currentColor" />
+          </svg>
+          <span>Add to Personal Orbit (RSVP)</span>
+        `;
+      }
+    }
+
+    function openFocusModal() {
+      const overlay = document.getElementById('focusModalOverlay');
+      const card = document.getElementById('focusModalCard');
+      overlay.classList.remove('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-90', 'opacity-0');
+    }
+
+    function releaseFocusWell() {
+      const overlay = document.getElementById('focusModalOverlay');
+      const card = document.getElementById('focusModalCard');
+      overlay.classList.add('opacity-0', 'pointer-events-none');
+      card.classList.add('scale-90', 'opacity-0');
+
+      if (focusedNode) {
+        if (!focusedNode.isOrbiting) {
+          const angle = Math.random() * Math.PI * 2;
+          focusedNode.vx = Math.cos(angle) * 2;
+          focusedNode.vy = Math.sin(angle) * 2;
+        }
+      }
+      focusedNode = null;
+      isFocusMode = false;
+    }
+
+    function toggleRsvpCurrentEvent() {
+      if (!focusedNode) return;
+      const id = focusedNode.id;
+      const isCurrentlyRsvpd = rsvpEventIds.has(id);
+
+      if (isCurrentlyRsvpd) {
+        rsvpEventIds.delete(id);
+        focusedNode.setOrbiting(false);
+      } else {
+        rsvpEventIds.add(id);
+        focusedNode.setOrbiting(true);
+        soundEngine.playOrbitSound();
+      }
+
+      saveRsvps();
+      updateModalRsvpButton(!isCurrentlyRsvpd);
+      document.getElementById('modalOrbitStatus').classList.toggle('hidden', isCurrentlyRsvpd);
+      renderOrbitItemsList();
+    }
+
+    // --- KINETIC SHOCKWAVE / GRAVITATIONAL BLAST ---
+    function triggerGravitationalBlast() {
+      soundEngine.playRepulsionSound(400);
+      const cx = viewWidth / 2;
+      const cy = viewHeight / 2;
+
+      physicsNodes.forEach(node => {
+        if (!node.isOrbiting && node !== focusedNode && !node.isSwallowed) {
+          const dx = (node.x + node.radius) - cx;
+          const dy = (node.y + node.radius) - cy;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const blast = 16 + Math.random() * 6;
+          node.vx += (dx / dist) * blast;
+          node.vy += (dy / dist) * blast;
+        }
+      });
+
+      const ring = document.getElementById('orbitRing');
+      ring.style.borderColor = '#00f0ff';
+      ring.style.boxShadow = '0 0 60px rgba(0, 240, 255, 0.7)';
+      setTimeout(() => {
+        ring.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+        ring.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.18)';
+      }, 400);
+    }
+
+    // --- PERSONAL ORBIT DRAWER & LOCAL STORAGE SYNC ---
+    function updateOrbitBadge() {
+      const badge = document.getElementById('orbitCountBadge');
+      const totalCount = document.getElementById('orbitTotalCount');
+      const count = rsvpEventIds.size;
+      if (badge) badge.textContent = count;
+      if (totalCount) totalCount.textContent = count;
+    }
+
+    function toggleOrbitListModal() {
+      const modal = document.getElementById('orbitListModal');
+      const isClosed = modal.classList.contains('opacity-0');
+      if (isClosed) {
+        renderOrbitItemsList();
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.firstElementChild.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.firstElementChild.classList.add('scale-95');
+      }
+    }
+
+    function renderOrbitItemsList() {
+      const listContainer = document.getElementById('orbitItemsList');
+      listContainer.innerHTML = '';
+      updateOrbitBadge();
+
+      if (rsvpEventIds.size === 0) {
+        listContainer.innerHTML = `
+          <div class="py-8 text-center text-slate-400 font-mono text-xs">
+            <svg class="w-8 h-8 mx-auto mb-2 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" />
+            </svg>
+            No events in personal orbit yet.<br>Click any event node and select "Add to Personal Orbit"!
+          </div>
+        `;
+        return;
+      }
+
+      eventsList.forEach(ev => {
+        if (rsvpEventIds.has(ev.id)) {
+          const item = document.createElement('div');
+          item.className = 'flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/40 transition-colors';
+          item.innerHTML = `
+            <div class="flex items-center gap-2.5 flex-1 min-w-0 pr-2">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: ${ev.color}; box-shadow: 0 0 8px ${ev.color}"></span>
+              <div class="truncate">
+                <div class="text-xs font-semibold text-white truncate">${ev.title}</div>
+                <div class="text-[10px] font-mono text-cyan-300/80 truncate">${ev.date.split('•')[0]}</div>
+              </div>
+            </div>
+            <button onclick="removeOrbitById('${ev.id}')" class="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition-colors flex-shrink-0" title="Release from Orbit">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          `;
+          listContainer.appendChild(item);
+        }
+      });
+    }
+
+    function removeOrbitById(id) {
+      rsvpEventIds.delete(id);
+      saveRsvps();
+      const node = physicsNodes.find(n => n.id === id);
+      if (node) {
+        node.setOrbiting(false);
+      }
+      renderOrbitItemsList();
+    }
+
+    function clearAllOrbit() {
+      rsvpEventIds.clear();
+      saveRsvps();
+      physicsNodes.forEach(n => {
+        if (n.isOrbiting) n.setOrbiting(false);
+      });
+      renderOrbitItemsList();
+    }
+
+    // --- CATEGORY FILTERING ---
+    function filterCategory(category) {
+      activeCategoryFilter = category;
+      document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+        const isMatch = btn.getAttribute('data-category') === category;
+        btn.classList.toggle('bg-white/15', isMatch);
+        btn.classList.toggle('text-white', isMatch);
+        btn.classList.toggle('text-slate-400', !isMatch);
+      });
+
+      physicsNodes.forEach(node => {
+        const match = (category === 'all' || node.data.category.toLowerCase().includes(category.toLowerCase()));
+        node.el.style.opacity = match ? '1' : '0.22';
+        node.el.style.filter = match ? 'none' : 'grayscale(80%)';
+      });
+    }
+
+    // --- CREATE NEW EVENT MODAL (Judges Playground) ---
+    function openCreateEventModal() {
+      const modal = document.getElementById('createEventModal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeCreateEventModal() {
+      const modal = document.getElementById('createEventModal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function handleCreateEventSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('inputTitle').value.trim();
+      const date = document.getElementById('inputDate').value.trim();
+      const category = document.getElementById('inputCategory').value;
+      const venue = document.getElementById('inputVenue').value.trim();
+      const desc = document.getElementById('inputDescription').value.trim();
+      const tagsRaw = document.getElementById('inputTags').value.trim();
+      const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()) : [category];
+
+      const palette = {
+        'AI/ML': { color: '#00f0ff', glow: 'shadow-[0_0_35px_rgba(0,240,255,0.45)]', border: 'border-cyan-400/40', bg: 'radial-gradient(circle at 35% 35%, rgba(0, 240, 255, 0.28) 0%, rgba(6, 13, 29, 0.85) 100%)' },
+        'Robotics': { color: '#ffaa00', glow: 'shadow-[0_0_35px_rgba(255,170,0,0.45)]', border: 'border-amber-400/40', bg: 'radial-gradient(circle at 35% 35%, rgba(255, 170, 0, 0.28) 0%, rgba(20, 12, 4, 0.85) 100%)' },
+        'WebDev': { color: '#bd00ff', glow: 'shadow-[0_0_35px_rgba(189,0,255,0.45)]', border: 'border-purple-400/40', bg: 'radial-gradient(circle at 35% 35%, rgba(189, 0, 255, 0.28) 0%, rgba(17, 6, 28, 0.85) 100%)' },
+        'Pitch': { color: '#00ff88', glow: 'shadow-[0_0_35px_rgba(0,255,136,0.45)]', border: 'border-emerald-400/40', bg: 'radial-gradient(circle at 35% 35%, rgba(0, 255, 136, 0.28) 0%, rgba(4, 22, 14, 0.85) 100%)' },
+        'Academics': { color: '#ff0055', glow: 'shadow-[0_0_35px_rgba(255,0,85,0.45)]', border: 'border-rose-400/40', bg: 'radial-gradient(circle at 35% 35%, rgba(255, 0, 85, 0.28) 0%, rgba(26, 4, 12, 0.85) 100%)' }
+      }[category] || { color: '#00f0ff', glow: 'shadow-[0_0_35px_rgba(0,240,255,0.45)]', border: 'border-cyan-400/40', bg: 'radial-gradient(circle at 35% 35%, rgba(0, 240, 255, 0.28) 0%, rgba(6, 13, 29, 0.85) 100%)' };
+
+      const newEv = {
+        id: `evt-${Date.now()}`,
+        title,
+        date,
+        category,
+        venue,
+        description: desc,
+        tags,
+        color: palette.color,
+        glowClass: palette.glow,
+        borderClass: palette.border,
+        bgGradient: palette.bg
+      };
+
+      saveCustomEvent(newEv);
+      eventsList.push(newEv);
+
+      const node = new EventOrbNode(newEv, physicsNodes.length, physicsNodes.length + 1);
+      node.x = viewWidth / 2 - node.radius;
+      node.y = viewHeight / 2 - node.radius;
+      const angle = Math.random() * Math.PI * 2;
+      node.vx = Math.cos(angle) * 8;
+      node.vy = Math.sin(angle) * 8;
+
+      physicsNodes.push(node);
+      document.getElementById('physicsContainer').appendChild(node.el);
+
+      closeCreateEventModal();
+      document.getElementById('newEventForm').reset();
+      soundEngine.playOrbitSound();
+    }
+
+    // --- CURSOR & TOUCH TRACKING (Anti-Gravity Repulsion Field) ---
+    const repulsionIndicator = document.getElementById('cursorRepulsionField');
+
+    function updateCursorPosition(x, y) {
+      cursor.x = x;
+      cursor.y = y;
+      cursor.active = true;
+      if (repulsionIndicator) {
+        repulsionIndicator.style.left = `${x}px`;
+        repulsionIndicator.style.top = `${y}px`;
+        repulsionIndicator.style.opacity = '1';
+      }
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      updateCursorPosition(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseleave', () => {
+      cursor.active = false;
+      if (repulsionIndicator) repulsionIndicator.style.opacity = '0';
+    });
+
+    // Touch event listeners for mobile devices
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        updateCursorPosition(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        updateCursorPosition(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      cursor.active = false;
+      if (repulsionIndicator) repulsionIndicator.style.opacity = '0';
+    });
+
+    // Close modals on overlay backdrop click
+    document.getElementById('focusModalOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'focusModalOverlay') releaseFocusWell();
+    });
+    document.getElementById('orbitListModal').addEventListener('click', (e) => {
+      if (e.target.id === 'orbitListModal') toggleOrbitListModal();
+    });
+    document.getElementById('createEventModal').addEventListener('click', (e) => {
+      if (e.target.id === 'createEventModal') closeCreateEventModal();
+    });
+
+    // Keyboard Shortcuts (Esc to close, Space to Shockwave)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        releaseFocusWell();
+        document.getElementById('orbitListModal').classList.add('opacity-0', 'pointer-events-none');
+        closeCreateEventModal();
+      } else if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        triggerGravitationalBlast();
+      }
+    });
+
+    // --- MAIN PHYSICS & ANIMATION LOOP (requestAnimationFrame) ---
+    // physicsLoopId is stored so we can pause it when switching to Standard view
+    let physicsLoopId = null;
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+    let fpsTime = performance.now();
+    const fpsElem = document.getElementById('fpsCounter');
+
+    function physicsLoop(currentTime) {
+      const deltaTime = (currentTime - lastFrameTime) / 1000;
+      lastFrameTime = currentTime;
+
+      frameCount++;
+      if (currentTime - fpsTime > 500) {
+        const fps = Math.round((frameCount * 1000) / (currentTime - fpsTime));
+        if (fpsElem) fpsElem.textContent = `${fps} FPS`;
+        frameCount = 0;
+        fpsTime = currentTime;
+      }
+
+      for (let i = 0; i < physicsNodes.length; i++) {
+        physicsNodes[i].update(deltaTime);
+      }
+
+      physicsLoopId = requestAnimationFrame(physicsLoop); // Store RAF ID for pausable control
+    }
+
+    function pausePhysics() {
+      if (physicsLoopId) {
+        cancelAnimationFrame(physicsLoopId);
+        physicsLoopId = null;
+      }
+    }
+
+    function resumePhysics() {
+      if (!physicsLoopId) {
+        lastFrameTime = performance.now(); // Reset frame timer to avoid giant delta spike
+        physicsLoopId = requestAnimationFrame(physicsLoop);
+      }
+    }
+
+    // =====================================================================
+    // VIEW TOGGLE SYSTEM: Bubble (Zero-G) <-> Standard (Grid)
+    // =====================================================================
+    const VIEW_STORAGE_KEY = 'campus_orbit_view_mode';
+    let currentView = 'bubble'; // Runtime state
+
+    function loadSavedView() {
+      try {
+        const v = localStorage.getItem(VIEW_STORAGE_KEY);
+        return v === 'standard' ? 'standard' : 'bubble';
+      } catch(e) { return 'bubble'; }
+    }
+
+    function savePrefView(view) {
+      try { localStorage.setItem(VIEW_STORAGE_KEY, view); } catch(e) {}
+    }
+
+    function switchToBubbleView() {
+      currentView = 'bubble';
+      savePrefView('bubble');
+
+      // Show physics universe
+      document.getElementById('physicsContainer').classList.remove('hidden');
+      document.getElementById('orbitSystemContainer').classList.remove('hidden');
+      document.getElementById('blackHoleContainer').classList.remove('hidden');
+      document.getElementById('cursorRepulsionField').classList.remove('hidden');
+
+      // Hide grid
+      document.getElementById('standardViewContainer').classList.add('hidden');
+
+      // Restart physics RAF loop
+      resumePhysics();
+
+      updateViewToggleUI();
+      updateSidebarNavActive('home');
+    }
+
+    function switchToStandardView() {
+      currentView = 'standard';
+      savePrefView('standard');
+
+      // Pause CPU-expensive physics loop
+      pausePhysics();
+      releaseFocusWell(); // Close any open focus modals
+
+      // Hide physics universe
+      document.getElementById('physicsContainer').classList.add('hidden');
+      document.getElementById('orbitSystemContainer').classList.add('hidden');
+      document.getElementById('blackHoleContainer').classList.add('hidden');
+      document.getElementById('cursorRepulsionField').classList.add('hidden');
+
+      // Show standard grid
+      document.getElementById('standardViewContainer').classList.remove('hidden');
+
+      renderStandardGrid();
+      updateViewToggleUI();
+      updateSidebarNavActive('grid');
+    }
+
+    function toggleView() {
+      if (currentView === 'bubble') {
+        switchToStandardView();
+      } else {
+        switchToBubbleView();
+      }
+    }
+
+    function updateViewToggleUI() {
+      const iconEl = document.getElementById('viewToggleIcon');
+      const textEl = document.getElementById('viewToggleText');
+      const sidebarLabel = document.getElementById('sidebarViewLabel');
+      const sidebarIcon = document.getElementById('sidebarViewIcon');
+      const btn = document.getElementById('viewToggleBtn');
+
+      if (currentView === 'bubble') {
+        // Bubble active → offer Grid switch
+        if (iconEl) iconEl.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>`;
+        if (textEl) textEl.textContent = 'Grid View';
+        if (sidebarLabel) sidebarLabel.textContent = 'Switch to Grid View';
+        if (btn) btn.title = 'Switch to Standard Grid View';
+        if (btn) { btn.classList.remove('border-cyan-400/50', 'text-cyan-300', 'bg-cyan-500/15'); btn.classList.add('bg-white/8', 'border-white/15', 'text-slate-200'); }
+      } else {
+        // Standard active → offer Bubble switch
+        if (iconEl) iconEl.innerHTML = `<svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)"/>
+        </svg>`;
+        if (textEl) textEl.textContent = 'Zero-G';
+        if (sidebarLabel) sidebarLabel.textContent = 'Switch to Zero-G Mode';
+        if (btn) btn.title = 'Switch to Zero-G Bubble View';
+        if (btn) { btn.classList.add('border-cyan-400/50', 'text-cyan-300', 'bg-cyan-500/15'); btn.classList.remove('bg-white/8', 'border-white/15', 'text-slate-200'); }
+      }
+    }
+
+    // =====================================================================
+    // STANDARD GRID CARD RENDERER
+    // =====================================================================
+    function renderStandardGrid() {
+      const grid = document.getElementById('standardEventGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      eventsList.forEach(ev => {
+        const isRsvpd = rsvpEventIds.has(ev.id);
+        const card = document.createElement('div');
+        card.className = 'std-event-card rounded-2xl overflow-hidden flex flex-col';
+        card.id = `std-card-${ev.id}`;
+        card.style.background = 'rgba(255,255,255,0.04)';
+        card.style.backdropFilter = 'blur(18px)';
+        card.style.WebkitBackdropFilter = 'blur(18px)';
+        card.style.border = '1px solid rgba(255,255,255,0.08)';
+        card.style.boxShadow = `0 4px 32px ${ev.color}18, 0 0 0 0 transparent`;
+
+        card.innerHTML = `
+          <div style="height:3px; background: linear-gradient(90deg, ${ev.color}, #00f0ff); box-shadow: 0 0 12px ${ev.color}88;"></div>
+          <div class="p-5 flex flex-col flex-1">
+            <!-- Badge row -->
+            <div class="flex items-center gap-2 mb-3">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-widest uppercase border"
+                style="color:${ev.color}; border-color:${ev.color}44; background:${ev.color}14;">
+                <span style="width:6px;height:6px;border-radius:50%;background:${ev.color};box-shadow:0 0 6px ${ev.color};display:inline-block;"></span>
+                ${ev.category}
+              </span>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-base font-bold text-white leading-snug mb-2">${ev.title}</h3>
+
+            <!-- Meta -->
+            <div class="space-y-1.5 mb-3">
+              <div class="flex items-center gap-2 text-xs text-slate-400">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="${ev.color}" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="font-mono" style="color:${ev.color}cc;">${ev.date}</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-500">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                ${ev.venue}
+              </div>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-400 leading-relaxed mb-4 flex-1">${ev.description}</p>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              ${(Array.isArray(ev.tags) ? ev.tags : []).map(t => `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-white/5 border border-white/8 text-slate-400">#${t}</span>`).join('')}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2 pt-3 border-t border-white/8">
+              <button id="std-rsvp-${ev.id}" onclick="toggleStdRsvp('${ev.id}')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                isRsvpd
+                  ? 'bg-rose-500/15 border border-rose-500/35 text-rose-300 hover:bg-rose-500/25'
+                  : 'bg-white/8 border border-white/12 text-slate-200 hover:bg-white/12 hover:border-cyan-400/30 hover:text-cyan-300'
+              }">
+                ${
+                  isRsvpd
+                  ? `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg><span>In Orbit ✓</span>`
+                  : `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" stroke-dasharray="4 4"></circle><circle cx="12" cy="12" r="3" fill="currentColor"></circle></svg><span>Add to Orbit</span>`
+                }
+              </button>
+              <button onclick="openEventInBubble('${ev.id}')" class="px-3 py-2 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5 hover:scale-105"
+                style="color:${ev.color}; border-color:${ev.color}44; background:${ev.color}14;" title="Open in Zero-G Universe">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)"></ellipse>
+                </svg>
+                <span class="hidden sm:inline">Zero-G</span>
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleStdRsvp(id) {
+      const wasRsvpd = rsvpEventIds.has(id);
+      if (wasRsvpd) { rsvpEventIds.delete(id); } else { rsvpEventIds.add(id); soundEngine.playOrbitSound(); }
+      saveRsvps();
+      updateOrbitBadge();
+      // Update only the clicked card's RSVP button (no full re-render)
+      const isNowRsvpd = rsvpEventIds.has(id);
+      const btn = document.getElementById(`std-rsvp-${id}`);
+      if (btn) {
+        btn.className = `flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          isNowRsvpd ? 'bg-rose-500/15 border border-rose-500/35 text-rose-300 hover:bg-rose-500/25' : 'bg-white/8 border border-white/12 text-slate-200 hover:bg-white/12 hover:border-cyan-400/30 hover:text-cyan-300'
+        }`;
+        btn.innerHTML = isNowRsvpd
+          ? `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg><span>In Orbit ✓</span>`
+          : `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" stroke-dasharray="4 4"></circle><circle cx="12" cy="12" r="3" fill="currentColor"></circle></svg><span>Add to Orbit</span>`;
+      }
+      // Sync the physics node's orbit state as well
+      const node = physicsNodes.find(n => n.id === id);
+      if (node) node.setOrbiting(isNowRsvpd);
+    }
+
+    function openEventInBubble(id) {
+      switchToBubbleView();
+      setTimeout(() => {
+        const node = physicsNodes.find(n => n.id === id);
+        if (node) handleNodeClick(node);
+      }, 160);
+    }
+
+    // =====================================================================
+    // SIDEBAR FUNCTIONS
+    // =====================================================================
+    function openSidebar() {
+      document.getElementById('sidebarMenu').classList.remove('translate-x-full');
+      document.getElementById('sidebarOverlay').classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebarMenu').classList.add('translate-x-full');
+      document.getElementById('sidebarOverlay').classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    // =====================================================================
+    // NAV LINK HANDLERS
+    // =====================================================================
+    function navHome() {
+      switchToBubbleView();
+      closeSidebar();
+    }
+
+    function navMyOrbit() {
+      closeSidebar();
+      toggleOrbitListModal();
+    }
+
+    function navTeams() {
+      closeSidebar();
+      showToast('🚀 Teams feature launching soon — stay in orbit!');
+    }
+
+    function navLeaderboard() {
+      closeSidebar();
+      showToast('📡 Live Leaderboard — incoming signal...');
+    }
+
+    function updateSidebarNavActive(active) {
+      const homeLink = document.getElementById('sidebarLinkHome');
+      if (homeLink) homeLink.classList.toggle('active', active === 'home');
+    }
+
+    // =====================================================================
+    // TOAST NOTIFICATION SYSTEM
+    // =====================================================================
+    let toastTimer = null;
+    function showToast(message, durationMs = 3000) {
+      const toast = document.getElementById('toastNotification');
+      if (!toast) return;
+      toast.innerHTML = `
+        <svg class="w-4 h-4 text-cyan-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>${message}</span>
+      `;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), durationMs);
+    }
+
+    // =====================================================================
+    // BOOTSTRAP APPLICATION
+    // =====================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedRsvps();
+      updateDimensions();
+      initPhysicsWorld();
+
+      // Restore saved view preference
+      const savedView = loadSavedView();
+      currentView = savedView;
+      if (savedView === 'standard') {
+        switchToStandardView();
+      } else {
+        updateViewToggleUI();
+        updateSidebarNavActive('home');
+        physicsLoopId = requestAnimationFrame(physicsLoop);
+      }
+
+      // Sync sidebar orbit badge
+      const sidebarBadge = document.getElementById('sidebarOrbitBadge');
+      if (sidebarBadge) sidebarBadge.textContent = rsvpEventIds.size;
+    });
+
+    // Keep sidebar orbit badge in sync with main badge
+    const _origSaveRsvps = saveRsvps;
+    function saveRsvps() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...rsvpEventIds])); } catch(e) {}
+      updateOrbitBadge();
+      const sidebarBadge = document.getElementById('sidebarOrbitBadge');
+      if (sidebarBadge) sidebarBadge.textContent = rsvpEventIds.size;
+    }
+
+    window.addEventListener('resize', () => {
+      updateDimensions();
+    });
+
+    // Esc key also closes sidebar
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSidebar();
+      }
+    });
+  </script>
+</body>
+</html>
